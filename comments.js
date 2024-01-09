@@ -1,33 +1,35 @@
-// create web server with express
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-const port = 3000;
-const db = require('./queries');
+// Create web server
+// Create route to get comments
+// Create route to add comments
+// Create route to delete comments
+// Create route to update comments
 
-app.use(bodyParser.json());
-app.use(
-    bodyParser.urlencoded({
-        extended: true,
-    })
-);
+// Import express
+const express = require("express");
 
-// GET request for all comments
-app.get('/comments', db.getComments);
+// Import express router
+const router = express.Router();
 
-// GET request for a single comment
-app.get('/comments/:id', db.getCommentById);
+// Import model
+const Comment = require("../models/comment");
 
-// POST request to create a new comment
-app.post('/comments', db.createComment);
+// Import middleware
+const auth = require("../middleware/auth");
 
-// PUT request to update a comment
-app.put('/comments/:id', db.updateComment);
+// Import comment controller
+const commentController = require("../controllers/comments");
 
-// DELETE request to delete a comment
-app.delete('/comments/:id', db.deleteComment);
+// Create route to get comments
+router.get("/", commentController.getComments);
 
-// start server
-app.listen(port, () => {
-    console.log(`App running on port ${port}.`);
-});
+// Create route to add comments
+router.post("/", auth, commentController.addComment);
+
+// Create route to delete comments
+router.delete("/:id", auth, commentController.deleteComment);
+
+// Create route to update comments
+router.put("/:id", auth, commentController.updateComment);
+
+// Export module
+module.exports = router;
